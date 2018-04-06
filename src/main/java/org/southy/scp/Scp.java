@@ -10,9 +10,9 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 /**
- * SCP Utility Class for Uploading files to an SCP/SFTP server.
+ * SCP Utility Class for Uploading/Downloading files to/from an SCP or SFTP server.
  */
-public class Scp {
+public final class Scp {
 
     enum Type {
         UPLOAD,
@@ -38,7 +38,7 @@ public class Scp {
     private String error;
 
     /**
-     * Create and SCP Upload object with a File
+     * Create an SCP Upload object with a File
      * @param file
      * @param hostname
      * @param username
@@ -48,11 +48,18 @@ public class Scp {
         return new Scp(file, hostname, username, Type.UPLOAD);
     }
 
+    /**
+     * Create an SCP Upload object with a filename
+     * @param file
+     * @param hostname
+     * @param username
+     * @return
+     */
     public static Scp upload(final String file, final String hostname, final String username) {
         return new Scp(new File(file), hostname, username, Type.UPLOAD);
     }
 
-    public Scp(final File file, final String hostname, final String username, final Type type) {
+    private Scp(final File file, final String hostname, final String username, final Type type) {
         this.file = file;
         this.hostname = hostname;
         this.username = username;
@@ -103,6 +110,14 @@ public class Scp {
     public Scp strictHostKeyChecking(final boolean strict) {
         this.strict = strict;
         return this;
+    }
+
+    public boolean success() {
+        return success;
+    }
+
+    public String error() {
+        return error;
     }
 
     public Scp execute() {
