@@ -181,10 +181,10 @@ public final class Scp {
 
         command = "C0644 " + file.length() + " ";
         if(fileLocation.lastIndexOf('/')>0){
-            command+=fileLocation.substring(fileLocation.lastIndexOf('/')+1);
+            command += fileLocation.substring(fileLocation.lastIndexOf('/')+1);
         }
         else{
-            command+=fileLocation;
+            command += fileLocation;
         }
         command += "\n";
 
