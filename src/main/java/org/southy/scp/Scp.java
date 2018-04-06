@@ -35,7 +35,7 @@ public final class Scp {
     private boolean strict = true;
 
     private boolean success = false;
-    private String error;
+    private Exception error;
 
     /**
      * Create an SCP Upload object with a File
@@ -112,11 +112,20 @@ public final class Scp {
         return this;
     }
 
+    /**
+     * Returns success true or false.
+     * If there was a failure the error() will contain the Exception.
+     * @return
+     */
     public boolean success() {
         return success;
     }
 
-    public String error() {
+    /**
+     * Get the exception if there was an error.
+     * @return
+     */
+    public Exception error() {
         return error;
     }
 
@@ -153,7 +162,7 @@ public final class Scp {
             session.disconnect();
         } catch (JSchException | IOException e) {
             success = false;
-            error = e.getLocalizedMessage();
+            error = e;
         }
         return this;
     }
