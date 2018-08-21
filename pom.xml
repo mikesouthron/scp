@@ -14,8 +14,16 @@
     <description>A Wrapper around JSch to simplify downloading and uploading files over SCP</description>
 
     <scm>
-        <url>https://svn.apache.org/viewvc/maven</url>
+        <url>https://github.com/mikesouthron/scp</url>
     </scm>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <properties>
         <jsch.version>0.1.54</jsch.version>
