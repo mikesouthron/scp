@@ -5,12 +5,17 @@ import com.jcraft.jsch.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Properties;
+import java.util.Vector;
 import java.util.regex.Pattern;
 
 /**
  * SCP Utility Class for Uploading/Downloading files to/from an SCP or SFTP server.
+ * Opinionated wrapper around JSch
  */
 public final class Scp {
 
@@ -36,6 +41,30 @@ public final class Scp {
 
     private boolean success = false;
     private Exception error;
+
+    /**
+     * Create an SCP Download object. Filename of file on server, directory is the local directory that the file(s) will be downloaded to.
+     * @param filename
+     * @param directory
+     * @param hostname
+     * @param username
+     * @return
+     */
+    public static Scp download(final String filename, final File directory, final String hostname, final String username) {
+        return new Scp(directory, hostname, username, Type.DOWNLOAD).location(filename);
+    }
+
+    /**
+     * Create an SCP Download object. Filename of file on server, directory is the local directory that the file(s) will be downloaded to.
+     * @param filename
+     * @param directory
+     * @param hostname
+     * @param username
+     * @return
+     */
+    public static Scp download(final String filename, final String directory, final String hostname, final String username) {
+        return new Scp(new File(directory), hostname, username, Type.DOWNLOAD).location(filename);
+    }
 
     /**
      * Create an SCP Upload object with a File
@@ -155,7 +184,7 @@ public final class Scp {
                     uploadFile(session);
                     break;
                 case DOWNLOAD:
-                    //downloadFile(session);
+                    downloadFile(session);
                     break;
             }
 
@@ -208,6 +237,36 @@ public final class Scp {
         fis.close();
 
         channel.disconnect();
+
+        success = true;
+    }
+
+    private void downloadFile(final Session session) throws JSchException {
+            Channel channel = session.openChannel("sftp");
+            channel.connect();
+            ChannelSftp sftp = (ChannelSftp) channel;
+
+            copyFile(location, file, sftp);
+
+            channel.disconnect();
+            session.disconnect();
+    }
+
+    private void copyFile(String filename, File directory, ChannelSftp sftp) {
+        try {
+            Vector filenames = sftp.ls(filename);
+            for (Object f : filenames) {
+                ChannelSftp.LsEntry entry = (ChannelSftp.LsEntry) f;
+                File file = new File(directory, entry.getFilename());
+                InputStream is = sftp.get(entry.getFilename());
+                Files.copy(is, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                is.close();
+            }
+            success = true;
+        } catch (SftpException | IOException e) {
+            success = false;
+            error = e;
+        }
     }
 
 }
