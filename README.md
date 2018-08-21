@@ -7,7 +7,11 @@ Wrapper for JSch for SCP uploads and downloads
 ### Maven
 
 ```xml
-
+<dependency>
+    <groupId>org.southy</groupId>
+    <artifactId>scp</artifactId>
+    <version>1.0</version>
+</dependency>
 ```
 
 ### Usage
